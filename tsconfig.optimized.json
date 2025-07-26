@@ -1,0 +1,71 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["es2020", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+    "checkJs": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./build",
+    "rootDir": "./src",
+    "removeComments": true,
+    "noEmitOnError": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "exactOptionalPropertyTypes": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "importHelpers": true,
+    "importsNotUsedAsValues": "remove",
+    "verbatimModuleSyntax": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@packages/*": ["packages/*"],
+      "@core/*": ["packages/ckeditor5-core/*"],
+      "@engine/*": ["packages/ckeditor5-engine/*"],
+      "@ui/*": ["packages/ckeditor5-ui/*"],
+      "@utils/*": ["packages/ckeditor5-utils/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "typings/**/*",
+    "packages/**/*.ts",
+    "packages/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/tests/**",
+    "**/test/**"
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "experimentalSpecifierResolution": "node"
+  }
+} 
