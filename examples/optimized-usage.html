@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKEditor 5 - Optimized Usage Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .editor-container {
+            margin: 20px 0;
+        }
+        
+        .ck-editor__editable {
+            min-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .performance-panel {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 CKEditor 5 - Optimized & Scalable</h1>
+            <p>Contoh penggunaan dengan lazy loading dan performance monitoring</p>
+        </div>
+        
+        <div class="content">
+            <div class="controls">
+                <h3>🎛️ Controls</h3>
+                <button class="btn" id="loadBasic">Load Basic Features</button>
+                <button class="btn" id="loadAdvanced">Load Advanced Features</button>
+                <button class="btn" id="loadMedia">Load Media Features</button>
+                <button class="btn" id="clearCache">Clear Cache</button>
+                <button class="btn" id="showPerformance">Show Performance</button>
+                <button class="btn" id="resetEditor">Reset Editor</button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Loading features...
+            </div>
+            
+            <div class="performance-panel" id="performancePanel" style="display: none;">
+                <h4>📊 Performance Metrics</h4>
+                <div id="performanceData"></div>
+            </div>
+            
+            <div class="editor-container">
+                <h3>📝 Editor</h3>
+                <div id="editor"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import optimized CKEditor 5
+        import { 
+            ClassicEditor, 
+            lazyLoad, 
+            performanceMonitor, 
+            lazyLoader,
+            measure,
+            measureAsync 
+        } from './build/production/ckeditor5.js';
+
+        class OptimizedEditor {
+            constructor() {
+                this.editor = null;
+                this.loadedFeatures = new Set();
+                this.initializeEditor();
+                this.bindEvents();
+            }
+
+            async initializeEditor() {
+                try {
+                    console.log('🚀 Initializing optimized CKEditor...');
+                    
+                    // Measure editor initialization
+                    this.editor = await measureAsync('editor-initialization', async () => {
+                        return await ClassicEditor.create(document.querySelector('#editor'), {
+                            // Minimal configuration for fast startup
+                            placeholder: 'Mulai menulis...',
+                            toolbar: ['undo', 'redo']
+                        });
+                    });
+
+                    console.log('✅ Editor initialized successfully');
+                    this.updatePerformanceData();
+                    
+                } catch (error) {
+                    console.error('❌ Failed to initialize editor:', error);
+                }
+            }
+
+            bindEvents() {
+                // Load basic features
+                document.getElementById('loadBasic').addEventListener('click', () => {
+                    this.loadFeatures(['basicStyles', 'heading', 'list', 'link']);
+                });
+
+                // Load advanced features
+                document.getElementById('loadAdvanced').addEventListener('click', () => {
+                    this.loadFeatures(['codeBlock', 'blockQuote', 'alignment', 'font', 'highlight']);
+                });
+
+                // Load media features
+                document.getElementById('loadMedia').addEventListener('click', () => {
+                    this.loadFeatures(['image', 'mediaEmbed', 'table']);
+                });
+
+                // Clear cache
+                document.getElementById('clearCache').addEventListener('click', () => {
+                    lazyLoader.clearCache();
+                    console.log('🗑️ Cache cleared');
+                    this.updatePerformanceData();
+                });
+
+                // Show performance
+                document.getElementById('showPerformance').addEventListener('click', () => {
+                    this.togglePerformancePanel();
+                });
+
+                // Reset editor
+                document.getElementById('resetEditor').addEventListener('click', () => {
+                    this.resetEditor();
+                });
+            }
+
+            async loadFeatures(featureNames) {
+                const loadingEl = document.getElementById('loading');
+                loadingEl.classList.add('show');
+
+                try {
+                    console.log(`📦 Loading features: ${featureNames.join(', ')}`);
+                    
+                    const startTime = performance.now();
+                    
+                    // Load features in parallel
+                    const featurePromises = featureNames.map(async (featureName) => {
+                        if (this.loadedFeatures.has(featureName)) {
+                            console.log(`✅ Feature ${featureName} already loaded`);
+                            return;
+                        }
+
+                        try {
+                            const featureModule = await lazyLoad[featureName]();
+                            this.loadedFeatures.add(featureName);
+                            console.log(`✅ Feature ${featureName} loaded successfully`);
+                            return featureModule;
+                        } catch (error) {
+                            console.error(`❌ Failed to load feature ${featureName}:`, error);
+                        }
+                    });
+
+                    const loadedFeatures = await Promise.all(featurePromises);
+                    const endTime = performance.now();
+                    
+                    console.log(`⏱️ Features loaded in ${endTime - startTime}ms`);
+                    
+                    // Update editor toolbar
+                    this.updateEditorToolbar();
+                    
+                    // Update performance data
+                    this.updatePerformanceData();
+                    
+                } catch (error) {
+                    console.error('❌ Failed to load features:', error);
+                } finally {
+                    loadingEl.classList.remove('show');
+                }
+            }
+
+            updateEditorToolbar() {
+                if (!this.editor) return;
+
+                const toolbarItems = ['undo', 'redo'];
+                
+                // Add basic features
+                if (this.loadedFeatures.has('basicStyles')) {
+                    toolbarItems.push('bold', 'italic', 'underline', 'strikethrough');
+                }
+                
+                if (this.loadedFeatures.has('heading')) {
+                    toolbarItems.push('heading');
+                }
+                
+                if (this.loadedFeatures.has('list')) {
+                    toolbarItems.push('bulletedList', 'numberedList');
+                }
+                
+                if (this.loadedFeatures.has('link')) {
+                    toolbarItems.push('link');
+                }
+                
+                if (this.loadedFeatures.has('image')) {
+                    toolbarItems.push('imageUpload');
+                }
+                
+                if (this.loadedFeatures.has('table')) {
+                    toolbarItems.push('insertTable');
+                }
+                
+                if (this.loadedFeatures.has('codeBlock')) {
+                    toolbarItems.push('codeBlock');
+                }
+                
+                if (this.loadedFeatures.has('blockQuote')) {
+                    toolbarItems.push('blockQuote');
+                }
+                
+                if (this.loadedFeatures.has('alignment')) {
+                    toolbarItems.push('alignment');
+                }
+                
+                if (this.loadedFeatures.has('font')) {
+                    toolbarItems.push('fontSize', 'fontFamily');
+                }
+                
+                if (this.loadedFeatures.has('highlight')) {
+                    toolbarItems.push('highlight');
+                }
+
+                // Update editor configuration
+                this.editor.config.set('toolbar', toolbarItems);
+            }
+
+            updatePerformanceData() {
+                const report = performanceMonitor.getReport();
+                const cacheStats = lazyLoader.getCacheStats();
+                
+                const performanceData = document.getElementById('performanceData');
+                performanceData.innerHTML = `
+                    <div><strong>Total Operations:</strong> ${report.summary.operationCount}</div>
+                    <div><strong>Average Duration:</strong> ${report.summary.averageDuration.toFixed(2)}ms</div>
+                    <div><strong>Slowest Operation:</strong> ${report.summary.slowestOperation}</div>
+                    <div><strong>Memory Peak:</strong> ${this.formatBytes(report.summary.memoryPeak)}</div>
+                    <div><strong>Cache Size:</strong> ${this.formatBytes(cacheStats.size)}</div>
+                    <div><strong>Cache Entries:</strong> ${cacheStats.entryCount}</div>
+                    <div><strong>Loaded Features:</strong> ${this.loadedFeatures.size}</div>
+                `;
+            }
+
+            togglePerformancePanel() {
+                const panel = document.getElementById('performancePanel');
+                const isVisible = panel.style.display !== 'none';
+                
+                if (isVisible) {
+                    panel.style.display = 'none';
+                } else {
+                    panel.style.display = 'block';
+                    this.updatePerformanceData();
+                }
+            }
+
+            async resetEditor() {
+                if (this.editor) {
+                    await this.editor.destroy();
+                }
+                
+                this.loadedFeatures.clear();
+                lazyLoader.clearCache();
+                
+                // Reinitialize
+                await this.initializeEditor();
+            }
+
+            formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        }
+
+        // Initialize the optimized editor when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new OptimizedEditor();
+        });
+
+        // Performance monitoring
+        setInterval(() => {
+            const report = performanceMonitor.getReport();
+            if (report.summary.operationCount > 0) {
+                console.log('📊 Performance Update:', {
+                    operations: report.summary.operationCount,
+                    averageTime: report.summary.averageDuration.toFixed(2) + 'ms',
+                    memoryPeak: report.summary.memoryPeak
+                });
+            }
+        }, 10000); // Update every 10 seconds
+    </script>
+</body>
+</html> 
